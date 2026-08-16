@@ -178,173 +178,130 @@ class EBookApp {
     // Check if inline report builder container exists, and render it
     const inlineReportContainer = document.getElementById("report-builder-inline-container");
     if (inlineReportContainer) {
-      this.renderReportBuilderInline("report-builder-inline-container", this.currentUnit);
+      this.renderActivitySolutionsInline("report-builder-inline-container", this.currentUnit);
     }
   }
 
-  renderReportBuilderInline(containerId, unitId) {
+  renderActivitySolutionsInline(containerId, unitId) {
     this.activeReportUnit = unitId;
-    const formContainer = document.getElementById(containerId);
-    if (!formContainer) return;
+    const container = document.getElementById(containerId);
+    if (!container) return;
     
     const themeColor = unitId === "unit12" ? "var(--theme-purple)" : "var(--theme-orange)";
-    const headerTitle = unitId === "unit12" ? "เครื่องมือสร้างรายงานกิจกรรม 12.10 (สารประกอบอินทรีย์)" : "เครื่องมือสร้างรายงานกิจกรรม 13.3 (พอลิเมอร์และผลกระทบ)";
+    const themeLightColor = unitId === "unit12" ? "var(--theme-purple-light)" : "var(--theme-orange-light)";
+    const themeDarkColor = unitId === "unit12" ? "var(--theme-purple-dark)" : "var(--theme-orange-dark)";
+    const headerTitle = unitId === "unit12" ? "เฉลยกิจกรรม 12.10: สืบค้นข้อมูลสารประกอบอินทรีย์" : "เฉลยกิจกรรม 13.3: สืบค้นการกำจัดและผลกระทบของพอลิเมอร์";
     
     let selectOptions = "";
-    let customInputsHtml = "";
-    let formFieldsHtml = "";
-    
     if (unitId === "unit12") {
       selectOptions = organicCompounds.map(c => `<option value="${c.id}">${c.nameTh} (${c.formula})</option>`).join("");
-      customInputsHtml = `
-        <div id="custom-compound-inputs" style="display:none; border: 1px dashed var(--border-color); padding: 1rem; border-radius: var(--radius-sm); gap: 1rem; flex-direction: column; margin-bottom: 1rem;">
-          <div class="form-row">
-            <div class="form-group">
-              <label>ชื่อสารเคมี (ภาษาไทย)</label>
-              <input type="text" id="rep-custom-name-th" placeholder="เช่น เมทิลแอลกอฮอล์">
-            </div>
-            <div class="form-group">
-              <label>สูตรโมเลกุล</label>
-              <input type="text" id="rep-custom-formula" placeholder="เช่น CH3OH">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>ประเภท / หมู่ฟังก์ชัน</label>
-            <input type="text" id="rep-custom-group" placeholder="เช่น แอลกอฮอล์ / ไฮดรอกซิล">
-          </div>
-        </div>
-      `;
-      formFieldsHtml = `
-        <div class="form-group">
-          <label>1. ประโยชน์และการใช้งานของสารประกอบอินทรีย์นี้</label>
-          <textarea id="rep-uses" rows="3" placeholder="ระบุการใช้งาน สารละลาย ยารักษาโรค เชื้อเพลิง ฯลฯ"></textarea>
-        </div>
-        <div class="form-group">
-          <label>2. อันตรายและความเป็นพิษต่อสุขภาพ/สิ่งแวดล้อม</label>
-          <textarea id="rep-hazards" rows="3" placeholder="ความเป็นพิษเฉียบพลัน ความเป็นสารไวไฟ หรือสารก่อมะเร็ง"></textarea>
-        </div>
-        <div class="form-group">
-          <label>3. ข้อควรระวังและแนวทางแก้ไขความปลอดภัย</label>
-          <textarea id="rep-precautions" rows="3" placeholder="อุปกรณ์ป้องกันตนเอง หรือวิธีการจัดเก็บที่ถูกต้อง"></textarea>
-        </div>
-        <div class="form-group">
-          <label>4. ปฏิกิริยาเคมีที่เกี่ยวข้อง (ถ้ามี)</label>
-          <textarea id="rep-reactions" rows="2" placeholder="สมการปฏิกิริยาเคมี เช่น การเผาไหม้ การเกิดเอสเทอร์"></textarea>
-        </div>
-      `;
     } else {
       selectOptions = polymerRecycling.map(p => `<option value="${p.code}">รหัสหมายเลข ${p.code} - ${p.abbreviation} (${p.nameTh})</option>`).join("");
-      customInputsHtml = `
-        <div id="custom-compound-inputs" style="display:none; border: 1px dashed var(--border-color); padding: 1rem; border-radius: var(--radius-sm); gap: 1rem; flex-direction: column; margin-bottom: 1rem;">
-          <div class="form-row">
-            <div class="form-group">
-              <label>ชื่อพอลิเมอร์ (ภาษาไทย)</label>
-              <input type="text" id="rep-custom-name-th" placeholder="เช่น เบกาไลต์">
-            </div>
-            <div class="form-group">
-              <label>โครงสร้าง/ประเภทพอลิเมอร์</label>
-              <input type="text" id="rep-custom-group" placeholder="เช่น ร่างแห (Cross-linked)">
-            </div>
-          </div>
-        </div>
-      `;
-      formFieldsHtml = `
-        <div class="form-group">
-          <label>1. โครงสร้างเคมี / สมบัติทางกายภาพ</label>
-          <textarea id="rep-uses" rows="3" placeholder="ระบุโครงสร้าง (เส้น/กิ่ง/ร่างแห) สมบัติต่อความร้อน การยืดหยุ่น"></textarea>
-        </div>
-        <div class="form-group">
-          <label>2. ผลกระทบจากการใช้งานและการกำจัดพลาสติกนี้</label>
-          <textarea id="rep-hazards" rows="3" placeholder="การย่อยสลายยาก การเกิดไมโครพลาสติก หรือไอพิษจากการเผา"></textarea>
-        </div>
-        <div class="form-group">
-          <label>3. แนวทางการแก้ไขการสะสมขยะพลาสติก (ตามหลัก 5Rs หรือการประยุกต์ใช้วัสดุทดแทน)</label>
-          <textarea id="rep-precautions" rows="3" placeholder="การรีไซเคิล การใช้พลาสติกชีวภาพ หรือการใช้ซ้ำ"></textarea>
-        </div>
-      `;
     }
 
-    formContainer.innerHTML = `
-      <div class="card" style="margin-top: 3rem; border: 2px solid ${themeColor}; background-color: var(--card-bg);">
-        <h3 style="color: ${themeColor}; font-size: 1.3rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
-          <span>📝</span> ${headerTitle}
+    container.innerHTML = `
+      <div class="card" style="margin-top: 3rem; border: 2px solid ${themeColor}; background-color: var(--card-bg); transition: none; transform: none; box-shadow: var(--shadow-md);">
+        <h3 style="color: ${themeDarkColor}; font-size: 1.4rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.6rem;">
+          <span>🧪</span> ${headerTitle}
         </h3>
-        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">
-          💡 ระบบได้ทำการสืบค้นและกรอกเฉลยทางวิชาการให้โดยอัตโนมัติแล้ว นักเรียนสามารถกรอกชื่อ-ชั้นเรียน และกดพิมพ์รายงานได้ทันที
-        </p>
         
-        <div class="report-builder-form">
-          <div class="form-row" style="margin-bottom: 1rem;">
-            <div class="form-group">
-              <label>ชื่อ-นามสกุล นักเรียน</label>
-              <input type="text" id="rep-student-name" placeholder="เด็กชาย/เด็กหญิง/นาย/นางสาว..." required>
-            </div>
-            <div class="form-group">
-              <label>ชั้นเรียน และเลขที่</label>
-              <input type="text" id="rep-student-class" placeholder="ม.6/X เลขที่ Y" required>
-            </div>
-          </div>
-          
-          <div class="form-group" style="margin-bottom: 1rem;">
-            <label>เลือกสารประกอบ/พอลิเมอร์ที่ต้องการสืบค้น</label>
-            <select id="rep-select-item">
-              ${selectOptions}
-              <option value="custom">สืบค้นสารอื่นเอง (กรอกข้อมูลใหม่)</option>
-            </select>
-          </div>
-          
-          ${customInputsHtml}
-          ${formFieldsHtml}
-          
-          <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
-            <button class="btn ${unitId === 'unit12' ? 'btn-purple' : 'btn-orange'}" id="report-print-btn" style="width: auto; display: inline-flex; gap: 0.5rem;">
-              🖨️ พิมพ์รายงานสรุปกิจกรรม (PDF / Print)
-            </button>
-          </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-family: var(--font-accent); font-weight: 600; font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">
+            เลือกสารประกอบ / พอลิเมอร์ที่ต้องการสืบค้นเพื่อแสดงคำตอบ:
+          </label>
+          <select id="sol-select-item" style="border: 2px solid ${themeColor}; border-radius: var(--radius-sm); font-size: 1rem; padding: 0.7rem 1rem;">
+            ${selectOptions}
+          </select>
+        </div>
+        
+        <!-- Answer Display Section -->
+        <div id="sol-display-box" style="display: flex; flex-direction: column; gap: 1.5rem; border-top: 1px dashed var(--border-color); padding-top: 1.5rem;">
+          <!-- Dynamically populated on dropdown change -->
         </div>
       </div>
     `;
 
-    // Bind Auto-fill on Dropdown Change
-    const selectItem = formContainer.querySelector("#rep-select-item");
-    const customSection = formContainer.querySelector("#custom-compound-inputs");
-    
-    const autofillData = () => {
+    const selectItem = container.querySelector("#sol-select-item");
+    const displayBox = container.querySelector("#sol-display-box");
+
+    const updateDisplay = () => {
       const val = selectItem.value;
-      if (val === "custom") {
-        customSection.style.display = "flex";
-        formContainer.querySelector("#rep-uses").value = "";
-        formContainer.querySelector("#rep-hazards").value = "";
-        formContainer.querySelector("#rep-precautions").value = "";
-        if (unitId === "unit12") {
-          formContainer.querySelector("#rep-reactions").value = "";
-        }
+      if (unitId === "unit12") {
+        const c = organicCompounds.find(comp => comp.id === val);
+        if (!c) return;
+        
+        displayBox.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="margin-bottom: 0.2rem; color: var(--text-color);">${c.nameTh}</h2>
+              <span class="text-muted" style="font-size: 0.95rem;">${c.nameEn} | ${c.group}</span>
+            </div>
+            <span style="font-family: var(--font-accent); font-size: 1.1rem; font-weight: 600; background-color: ${themeLightColor}; color: ${themeDarkColor}; padding: 0.4rem 1rem; border-radius: var(--radius-sm);">${c.formula}</span>
+          </div>
+          
+          <div class="grid grid-2" style="gap: 1.5rem; margin-top: 0.5rem;">
+            <div class="svg-container" style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; display: flex; align-items: center; justify-content: center; height: 100%;">
+              ${c.structureSvg}
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+              <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+                <div class="detail-section-title" style="color: ${themeDarkColor}; font-size: 0.95rem; margin-bottom: 0.5rem;">🌟 ประโยชน์และการใช้งาน</div>
+                <p style="margin-bottom: 0; white-space: pre-line; line-height: 1.6;">${c.uses}</p>
+              </div>
+              <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+                <div class="detail-section-title" style="color: var(--color-danger); font-size: 0.95rem; margin-bottom: 0.5rem;">⚠️ อันตรายและความเป็นพิษต่อสุขภาพ/สิ่งแวดล้อม</div>
+                <p style="margin-bottom: 0; white-space: pre-line; line-height: 1.6;">${c.hazards}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid grid-2" style="gap: 1.5rem;">
+            <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+              <div class="detail-section-title" style="color: var(--color-warning); font-size: 0.95rem; margin-bottom: 0.5rem;">🛡️ ข้อควรระวังและแนวทางแก้ไขความปลอดภัย</div>
+              <p style="margin-bottom: 0; white-space: pre-line; line-height: 1.6;">${c.precautions}</p>
+            </div>
+            <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+              <div class="detail-section-title" style="color: var(--text-color); font-size: 0.95rem; margin-bottom: 0.5rem;">🔗 ปฏิกิริยาเคมีที่เกี่ยวข้อง</div>
+              <p style="margin-bottom: 0; white-space: pre-line; font-family: var(--font-body); line-height: 1.6;">${c.reaction}</p>
+            </div>
+          </div>
+        `;
       } else {
-        customSection.style.display = "none";
-        if (unitId === "unit12") {
-          const c = organicCompounds.find(comp => comp.id === val);
-          if (c) {
-            formContainer.querySelector("#rep-uses").value = c.uses;
-            formContainer.querySelector("#rep-hazards").value = c.hazards;
-            formContainer.querySelector("#rep-precautions").value = c.precautions;
-            formContainer.querySelector("#rep-reactions").value = c.reaction.replace(/<br>/g, "\n").replace(/<\/?code>/g, "");
-          }
-        } else {
-          const p = polymerRecycling.find(poly => poly.code === parseInt(val));
-          if (p) {
-            formContainer.querySelector("#rep-uses").value = `ชื่อย่อ: ${p.abbreviation}\nสมบัติ: ${p.properties}\nการใช้ประโยชน์: ${p.commonUses}`;
-            formContainer.querySelector("#rep-hazards").value = p.environmentalImpact;
-            formContainer.querySelector("#rep-precautions").value = p.recyclingMethod;
-          }
-        }
+        const p = polymerRecycling.find(poly => poly.code === parseInt(val));
+        if (!p) return;
+        
+        displayBox.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="margin-bottom: 0.2rem; color: var(--text-color);">${p.nameTh}</h2>
+              <span class="text-muted" style="font-size: 0.95rem;">${p.nameEn}</span>
+            </div>
+            <span class="recycle-badge code-${p.code}" style="display:flex; width: 44px; height: 44px; font-size: 1.3rem; font-family: var(--font-title); font-weight: bold; border-radius: 50%; color: #fff; align-items: center; justify-content: center;">${p.code}</span>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 1.2rem; margin-top: 0.5rem;">
+            <div class="grid grid-2" style="gap: 1.5rem;">
+              <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+                <div class="detail-section-title" style="color: ${themeDarkColor}; font-size: 0.95rem; margin-bottom: 0.5rem;">🔬 โครงสร้างเคมี / สมบัติทางกายภาพ</div>
+                <p style="margin-bottom: 0; white-space: pre-line; line-height: 1.6;">ชื่อย่อ: <strong>${p.abbreviation}</strong>\n${p.properties}\n\n<strong>การนำไปใช้งานทั่วไป:</strong> ${p.commonUses}</p>
+              </div>
+              <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+                <div class="detail-section-title" style="color: var(--color-danger); font-size: 0.95rem; margin-bottom: 0.5rem;">🚨 ผลกระทบจากการใช้งานและการกำจัด</div>
+                <p style="margin-bottom: 0; white-space: pre-line; line-height: 1.6;">${p.environmentalImpact}</p>
+              </div>
+            </div>
+            
+            <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1.2rem; border-radius: var(--radius-md);">
+              <div class="detail-section-title" style="color: var(--color-success); font-size: 0.95rem; margin-bottom: 0.5rem;">♻️ แนวทางการแก้ไขและการรีไซเคิลอย่างถูกต้อง</div>
+              <p style="margin-bottom: 0; white-space: pre-line; line-height: 1.6;">${p.recyclingMethod}</p>
+            </div>
+          </div>
+        `;
       }
     };
 
-    selectItem.addEventListener("change", autofillData);
-    autofillData(); // Trigger initial autofill
-
-    // Bind Print Button Click
-    formContainer.querySelector("#report-print-btn").addEventListener("click", () => this.generatePrintReport());
+    selectItem.addEventListener("change", updateDisplay);
+    updateDisplay(); // Initialize display
   }
 
   /* Organic Compound Explorer Component */
@@ -711,276 +668,7 @@ class EBookApp {
     });
   }
 
-  /* Report Builder Component */
-  openReportBuilder(unitId) {
-    this.activeReportUnit = unitId;
-    
-    const modal = document.getElementById("report-modal");
-    const modalTitle = document.getElementById("report-modal-title");
-    const formContainer = document.getElementById("report-form-container");
-    
-    if (unitId === "unit12") {
-      modalTitle.textContent = "เครื่องมือสร้างรายงานกิจกรรม 12.10 (สารประกอบอินทรีย์)";
-      modal.className = "modal-overlay theme-purple";
-      
-      // Build form for unit 12
-      formContainer.innerHTML = `
-        <div class="report-builder-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label>ชื่อ-นามสกุล นักเรียน</label>
-              <input type="text" id="rep-student-name" placeholder="เด็กชาย/เด็กหญิง/นาย/นางสาว..." required>
-            </div>
-            <div class="form-group">
-              <label>ชั้นเรียน และเลขที่</label>
-              <input type="text" id="rep-student-class" placeholder="ม.6/X เลขที่ Y" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>เลือกสารประกอบอินทรีย์ที่สืบค้น</label>
-            <select id="rep-select-item">
-              ${organicCompounds.map(c => `<option value="${c.id}">${c.nameTh} (${c.formula})</option>`).join("")}
-              <option value="custom">สืบค้นสารอื่น (กรอกข้อมูลเอง)</option>
-            </select>
-          </div>
-          
-          <!-- Custom compound details (hidden by default, shown if custom selected) -->
-          <div id="custom-compound-inputs" style="display:none; border: 1px dashed var(--border-color); padding: 1rem; border-radius: var(--radius-sm); gap: 1rem; flex-direction: column;">
-            <div class="form-row">
-              <div class="form-group">
-                <label>ชื่อสารเคมี (ภาษาไทย)</label>
-                <input type="text" id="rep-custom-name-th" placeholder="เช่น เมทิลแอลกอฮอล์">
-              </div>
-              <div class="form-group">
-                <label>สูตรโมเลกุล</label>
-                <input type="text" id="rep-custom-formula" placeholder="เช่น CH3OH">
-              </div>
-            </div>
-            <div class="form-group">
-              <label>ประเภท / หมู่ฟังก์ชัน</label>
-              <input type="text" id="rep-custom-group" placeholder="เช่น แอลกอฮอล์ / ไฮดรอกซิล">
-            </div>
-          </div>
 
-          <div class="form-group">
-            <label>1. ประโยชน์และการใช้งานของสารประกอบอินทรีย์นี้</label>
-            <textarea id="rep-uses" rows="3" placeholder="ระบุการใช้งาน สารละลาย ยารักษาโรค เชื้อเพลิง ฯลฯ"></textarea>
-          </div>
-          <div class="form-group">
-            <label>2. อันตรายและความเป็นพิษต่อสุขภาพ/สิ่งแวดล้อม</label>
-            <textarea id="rep-hazards" rows="3" placeholder="ความเป็นพิษเฉียบพลัน ความเป็นสารไวไฟ หรือสารก่อมะเร็ง"></textarea>
-          </div>
-          <div class="form-group">
-            <label>3. ข้อควรระวังและแนวทางแก้ไขความปลอดภัย</label>
-            <textarea id="rep-precautions" rows="3" placeholder="อุปกรณ์ป้องกันตนเอง หรือวิธีการจัดเก็บที่ถูกต้อง"></textarea>
-          </div>
-          <div class="form-group">
-            <label>4. ปฏิกิริยาเคมีที่เกี่ยวข้อง (ถ้ามี)</label>
-            <textarea id="rep-reactions" rows="2" placeholder="สมการปฏิกิริยาเคมี เช่น การเผาไหม้ การเกิดเอสเทอร์"></textarea>
-          </div>
-        </div>
-      `;
-    } else {
-      modalTitle.textContent = "เครื่องมือสร้างรายงานกิจกรรม 13.3 (พอลิเมอร์และผลกระทบ)";
-      modal.className = "modal-overlay theme-orange";
-      
-      // Build form for unit 13
-      formContainer.innerHTML = `
-        <div class="report-builder-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label>ชื่อ-นามสกุล นักเรียน</label>
-              <input type="text" id="rep-student-name" placeholder="เด็กชาย/เด็กหญิง/นาย/นางสาว..." required>
-            </div>
-            <div class="form-group">
-              <label>ชั้นเรียน และเลขที่</label>
-              <input type="text" id="rep-student-class" placeholder="ม.6/X เลขที่ Y" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>เลือกประเภทพอลิเมอร์พลาสติกที่สืบค้น</label>
-            <select id="rep-select-item">
-              ${polymerRecycling.map(p => `<option value="${p.code}">รหัสหมายเลข ${p.code} - ${p.abbreviation} (${p.nameTh})</option>`).join("")}
-              <option value="custom">สืบค้นพอลิเมอร์อื่น (กรอกข้อมูลเอง)</option>
-            </select>
-          </div>
-
-          <!-- Custom polymer inputs -->
-          <div id="custom-compound-inputs" style="display:none; border: 1px dashed var(--border-color); padding: 1rem; border-radius: var(--radius-sm); gap: 1rem; flex-direction: column;">
-            <div class="form-row">
-              <div class="form-group">
-                <label>ชื่อพอลิเมอร์ (ภาษาไทย)</label>
-                <input type="text" id="rep-custom-name-th" placeholder="เช่น เบกาไลต์">
-              </div>
-              <div class="form-group">
-                <label>โครงสร้าง/ประเภทพอลิเมอร์</label>
-                <input type="text" id="rep-custom-group" placeholder="เช่น ร่างแห (Cross-linked)">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>1. โครงสร้างเคมี / สมบัติทางกายภาพ</label>
-            <textarea id="rep-uses" rows="3" placeholder="ระบุโครงสร้าง (เส้น/กิ่ง/ร่างแห) สมบัติต่อความร้อน การยืดหยุ่น"></textarea>
-          </div>
-          <div class="form-group">
-            <label>2. ผลกระทบจากการใช้งานและการกำจัดพลาสติกนี้</label>
-            <textarea id="rep-hazards" rows="3" placeholder="การย่อยสลายยาก การเกิดไมโครพลาสติก หรือไอพิษจากการเผา"></textarea>
-          </div>
-          <div class="form-group">
-            <label>3. แนวทางการแก้ไขการสะสมขยะพลาสติก (ตามหลัก 5Rs หรือการประยุกต์ใช้วัสดุทดแทน)</label>
-            <textarea id="rep-precautions" rows="3" placeholder="การรีไซเคิล การใช้พลาสติกชีวภาพ หรือการใช้ซ้ำ"></textarea>
-          </div>
-        </div>
-      `;
-    }
-
-    // Auto fill database parameters on dropdown change
-    const selectItem = document.getElementById("rep-select-item");
-    const customSection = document.getElementById("custom-compound-inputs");
-    
-    const autofillData = () => {
-      const val = selectItem.value;
-      if (val === "custom") {
-        customSection.style.display = "flex";
-        document.getElementById("rep-uses").value = "";
-        document.getElementById("rep-hazards").value = "";
-        document.getElementById("rep-precautions").value = "";
-        if (unitId === "unit12") {
-          document.getElementById("rep-reactions").value = "";
-        }
-      } else {
-        customSection.style.display = "none";
-        if (unitId === "unit12") {
-          const c = organicCompounds.find(comp => comp.id === val);
-          if (c) {
-            document.getElementById("rep-uses").value = c.uses;
-            document.getElementById("rep-hazards").value = c.hazards;
-            document.getElementById("rep-precautions").value = c.precautions;
-            document.getElementById("rep-reactions").value = c.reaction.replace(/<br>/g, "\n").replace(/<\/?code>/g, "");
-          }
-        } else {
-          const p = polymerRecycling.find(poly => poly.code === parseInt(val));
-          if (p) {
-            document.getElementById("rep-uses").value = `ชื่อย่อ: ${p.abbreviation}\nสมบัติ: ${p.properties}\nการใช้ประโยชน์: ${p.commonUses}`;
-            document.getElementById("rep-hazards").value = p.environmentalImpact;
-            document.getElementById("rep-precautions").value = p.recyclingMethod;
-          }
-        }
-      }
-    };
-
-    selectItem.addEventListener("change", autofillData);
-    autofillData(); // Trigger initial autofill
-
-    // Modal footer print button
-    const footer = document.getElementById("report-modal-footer");
-    footer.innerHTML = `
-      <button class="btn btn-outline modal-close" onclick="app.closeModals()">ยกเลิก</button>
-      <button class="btn ${unitId === 'unit12' ? 'btn-purple' : 'btn-orange'}" id="report-print-btn">พิมพ์รายงาน (Print / Save PDF) 🖨️</button>
-    `;
-
-    document.getElementById("report-print-btn").addEventListener("click", () => this.generatePrintReport());
-
-    modal.classList.add("active");
-  }
-
-  generatePrintReport() {
-    const studentName = document.getElementById("rep-student-name").value.trim() || "ไม่ได้ระบุ";
-    const studentClass = document.getElementById("rep-student-class").value.trim() || "ไม่ได้ระบุ";
-    const selectVal = document.getElementById("rep-select-item").value;
-    
-    let itemName = "";
-    let itemSub = "";
-    let svgDraw = "";
-    
-    if (this.activeReportUnit === "unit12") {
-      if (selectVal === "custom") {
-        itemName = document.getElementById("rep-custom-name-th").value.trim() || "สารอินทรีย์นิรนาม";
-        itemSub = `สูตรเคมี: ${document.getElementById("rep-custom-formula").value} | กลุ่ม: ${document.getElementById("rep-custom-group").value}`;
-      } else {
-        const c = organicCompounds.find(comp => comp.id === selectVal);
-        itemName = c.nameTh;
-        itemSub = `สูตรเคมี: ${c.formula} | กลุ่ม: ${c.group}`;
-        svgDraw = c.structureSvg;
-      }
-    } else {
-      if (selectVal === "custom") {
-        itemName = document.getElementById("rep-custom-name-th").value.trim() || "พลาสติกนิรนาม";
-        itemSub = `กลุ่มพอลิเมอร์: ${document.getElementById("rep-custom-group").value}`;
-      } else {
-        const p = polymerRecycling.find(poly => poly.code === parseInt(selectVal));
-        itemName = p.nameTh;
-        itemSub = `รหัสรีไซเคิล: ${p.code} (${p.abbreviation})`;
-      }
-    }
-
-    const val1 = document.getElementById("rep-uses").value.trim();
-    const val2 = document.getElementById("rep-hazards").value.trim();
-    const val3 = document.getElementById("rep-precautions").value.trim();
-    const val4 = this.activeReportUnit === "unit12" ? document.getElementById("rep-reactions").value.trim() : null;
-
-    // Create a printable overlay
-    const printContainer = document.createElement("div");
-    printContainer.className = "print-report-container";
-    
-    printContainer.innerHTML = `
-      <div class="print-header">
-        <h1>ใบบันทึกกิจกรรมการสืบค้นข้อมูลวิทยาศาสตร์</h1>
-        <p>${this.activeReportUnit === 'unit12' ? 'กิจกรรม 12.10: สืบค้นข้อมูลสารประกอบอินทรีย์' : 'กิจกรรม 13.3: ผลกระทบและการกำจัดผลิตภัณฑ์พอลิเมอร์'}</p>
-      </div>
-      
-      <div class="print-meta-grid">
-        <div><strong>ผู้จัดทำ:</strong> ${studentName}</div>
-        <div><strong>ชั้นเรียน/เลขที่:</strong> ${studentClass}</div>
-        <div><strong>สารที่สืบค้น:</strong> ${itemName} (${itemSub})</div>
-        <div><strong>วันที่รายงาน:</strong> ${new Date().toLocaleDateString('th-TH')}</div>
-      </div>
-      
-      ${svgDraw ? `
-        <div class="print-section text-center">
-          <h3>โครงสร้างโมเลกุลแบบ 2D (Molecular Structure)</h3>
-          <div class="print-svg-box">${svgDraw}</div>
-        </div>
-      ` : ""}
-      
-      <div class="print-section">
-        <h3>1. ${this.activeReportUnit === 'unit12' ? 'ประโยชน์และการใช้งาน' : 'โครงสร้างและสมบัติทางกายภาพ'}</h3>
-        <p>${val1.replace(/\n/g, "<br>")}</p>
-      </div>
-      
-      <div class="print-section">
-        <h3>2. ${this.activeReportUnit === 'unit12' ? 'อันตรายและความเป็นพิษ' : 'ผลกระทบจากการใช้และการกำจัด'}</h3>
-        <p>${val2.replace(/\n/g, "<br>")}</p>
-      </div>
-      
-      <div class="print-section">
-        <h3>3. ${this.activeReportUnit === 'unit12' ? 'ข้อควรระวังในการใช้งานและการจัดการอย่างปลอดภัย' : 'แนวทางการแก้ไขปัญหาและการรีไซเคิลอย่างถูกต้อง'}</h3>
-        <p>${val3.replace(/\n/g, "<br>")}</p>
-      </div>
-      
-      ${val4 ? `
-        <div class="print-section">
-          <h3>4. ปฏิกิริยาเคมีที่เกี่ยวข้อง</h3>
-          <p>${val4.replace(/\n/g, "<br>")}</p>
-        </div>
-      ` : ""}
-      
-      <div style="margin-top: 50px; text-align: right; font-size: 11pt; border-top: 1px solid #000; padding-top: 10px;">
-        ลงชื่อผู้ตรวจรายงาน ............................................................ (ครูผู้สอน)
-      </div>
-    `;
-
-    document.body.appendChild(printContainer);
-    
-    // Trigger Print
-    window.print();
-    
-    // Cleanup print container
-    setTimeout(() => {
-      document.body.removeChild(printContainer);
-    }, 1000);
-  }
 
   /* Global Search Mechanism */
   handleSearch(query) {
@@ -1043,13 +731,19 @@ class EBookApp {
           snippet: `<strong>กลุ่ม:</strong> ${c.group}<br><strong>ประโยชน์:</strong> ${c.uses.substring(0, 80)}...`,
           action: () => {
             this.openUnit("unit12");
-            // Set active chapter to Chapter 3 (Activity) containing compound explorer
+            // Set active chapter to Chapter 3 (Activity) containing compound explorer and solutions viewer
             this.currentChapterIndex = 2; 
             this.renderSidebar();
             this.renderChapterContent();
-            // Select chemical
+            // Select chemical in explorer
             this.selectedCompoundId = c.id;
             this.renderOrganicExplorer("organic-explorer-placeholder");
+            // Select chemical in solutions
+            const selectItem = document.getElementById("sol-select-item");
+            if (selectItem) {
+              selectItem.value = c.id;
+              selectItem.dispatchEvent(new Event("change"));
+            }
           },
           badge: "สารอินทรีย์",
           badgeClass: "badge-purple"
@@ -1073,10 +767,14 @@ class EBookApp {
           snippet: `<strong>ประโยชน์:</strong> ${p.commonUses.substring(0, 80)}...`,
           action: () => {
             this.openUnit("unit13");
-            this.currentChapterIndex = 1; // Chapter 2: Environmental impact containing recycling details
+            this.currentChapterIndex = 2; // Chapter 3: Activity answers
             this.renderSidebar();
             this.renderChapterContent();
-            this.showPolymerCode(p.code);
+            const selectItem = document.getElementById("sol-select-item");
+            if (selectItem) {
+              selectItem.value = p.code;
+              selectItem.dispatchEvent(new Event("change"));
+            }
           },
           badge: "พอลิเมอร์/พลาสติก",
           badgeClass: "badge-orange"
