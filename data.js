@@ -157,12 +157,7 @@ const ebookData = {
                 <li>นำเสนอข้อมูลการสืบค้นต่อชั้นเรียนหรือสาธารณะ</li>
               </ol>
               
-              <div class="action-box">
-                <p class="text-center"><strong>💡 ระบบได้จัดทำเฉลยข้อมูลกิจกรรม 12.10 ไว้สำเร็จรูปแล้ว!</strong></p>
-                <button class="btn btn-purple btn-block" onclick="app.openReportBuilder('unit12')">
-                  📝 เปิดเครื่องมือพิมพ์รายงานกิจกรรม 12.10 (เฉลยพร้อมพิมพ์)
-                </button>
-              </div>
+              <div id="report-builder-inline-container"></div>
             </div>
           </div>
         `
@@ -315,12 +310,7 @@ const ebookData = {
                 <li>ร่วมอภิปรายเพื่อแลกเปลี่ยนความรู้และหาแนวทางแก้ไขร่วมกันในห้องเรียน</li>
               </ol>
               
-              <div class="action-box">
-                <p class="text-center"><strong>💡 ระบบได้จัดทำเฉลยข้อมูลกิจกรรม 13.3 ไว้สำเร็จรูปแล้ว!</strong></p>
-                <button class="btn btn-orange btn-block" onclick="app.openReportBuilder('unit13')">
-                  📝 เปิดเครื่องมือพิมพ์รายงานกิจกรรม 13.3 (เฉลยพร้อมพิมพ์)
-                </button>
-              </div>
+              <div id="report-builder-inline-container"></div>
             </div>
           </div>
         `
