@@ -190,7 +190,7 @@ class EBookApp {
     const themeColor = unitId === "unit12" ? "var(--theme-purple)" : "var(--theme-orange)";
     const themeLightColor = unitId === "unit12" ? "var(--theme-purple-light)" : "var(--theme-orange-light)";
     const themeDarkColor = unitId === "unit12" ? "var(--theme-purple-dark)" : "var(--theme-orange-dark)";
-    const headerTitle = unitId === "unit12" ? "เฉลยกิจกรรม 12.10: สืบค้นข้อมูลสารประกอบอินทรีย์" : "เฉลยกิจกรรม 13.3: สืบค้นการกำจัดและผลกระทบของพอลิเมอร์";
+    const headerTitle = unitId === "unit12" ? "ข้อมูลสืบค้นสารประกอบอินทรีย์ (กิจกรรม 12.10)" : "ข้อมูลสืบค้นการกำจัดและผลกระทบของพอลิเมอร์ (กิจกรรม 13.3)";
     
     let selectOptions = "";
     if (unitId === "unit12") {
