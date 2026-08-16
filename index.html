@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="เว็บแอปพลิเคชันการเรียนรู้วิชาเคมี ม.6 ในรูปแบบ E-Book แบบอินเตอร์แอคทีฟ ประกอบด้วย หน่วยที่ 12 สารประกอบอินทรีย์ และ หน่วยที่ 13 พอลิเมอร์และผลิตภัณฑ์">
+  <title>ห้องสมุด E-Book เคมีอินเทอร์แอคทีฟ ม.6</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Global Header -->
+  <header class="main-header" id="app-header">
+    <div class="logo-container" id="logo-btn" title="กลับหน้าแรก">
+      <div class="logo-icon">C</div>
+      <h1 class="logo-text">Chemistry E-Book</h1>
+    </div>
+    
+    <div class="controls-group">
+      <!-- Global Search -->
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="global-search" class="search-input" placeholder="ค้นหาเนื้อหา สารเคมี พลาสติก..." aria-label="Search content">
+      </div>
+      
+      <!-- Theme controls for Reader (Always accessible in header) -->
+      <div class="theme-controls" aria-label="Reading theme selectors">
+        <div class="theme-dot theme-dot-light active" data-theme="light" title="โหมดสว่าง" id="theme-btn-light"></div>
+        <div class="theme-dot theme-dot-sepia" data-theme="sepia" title="โหมดซีเปีย (ถนอมสายตา)" id="theme-btn-sepia"></div>
+        <div class="theme-dot theme-dot-dark" data-theme="dark" title="โหมดมืด" id="theme-btn-dark"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- View 1: Bookshelf Dashboard -->
+    <section class="bookshelf-section" id="dashboard-view">
+      <div class="container">
+        <div class="welcome-banner">
+          <h1>ยินดีต้อนรับสู่ห้องเรียนเคมีดิจิทัล</h1>
+          <p>เลือกบทเรียนแบบ E-Book ด้านล่างเพื่อเริ่มเรียนรู้และทำกิจกรรมสืบค้นข้อมูลเชิงลึก</p>
+        </div>
+        
+        <div class="book-shelf">
+          <!-- Book 1: Unit 12 -->
+          <article class="book-card" onclick="app.openUnit('unit12')" id="book-unit-12">
+            <div class="book-cover book-cover-purple">
+              <span class="badge">หน่วยที่ 12</span>
+              <h2>สารประกอบอินทรีย์</h2>
+            </div>
+            <div class="book-details">
+              <p>เรียนรู้เกี่ยวกับโครงสร้าง สูตรเคมี หมู่ฟังก์ชัน และทำกิจกรรม 12.10 เพื่อสืบค้นประโยชน์ โทษ และข้อควรระวังในการใช้งานสารประกอบอินทรีย์ต่าง ๆ พร้อมแบบทดสอบโต้ตอบได้</p>
+              <button class="btn btn-purple btn-block">📚 เปิดอ่าน E-Book</button>
+            </div>
+          </article>
+          
+          <!-- Book 2: Unit 13 -->
+          <article class="book-card" onclick="app.openUnit('unit13')" id="book-unit-13">
+            <div class="book-cover book-cover-orange">
+              <span class="badge">หน่วยที่ 13</span>
+              <h2>พอลิเมอร์และผลิตภัณฑ์</h2>
+            </div>
+            <div class="book-details">
+              <p>ทำความเข้าใจพอลิเมอร์ชนิดต่าง ๆ โครงสร้างโมเลกุล ผลกระทบต่อสิ่งแวดล้อม และสัญลักษณ์การรีไซเคิลพลาสติก 7 ประเภท พร้อมกิจกรรมสืบค้น 13.3 และแนวทางแก้ไขแบบยั่งยืน</p>
+              <button class="btn btn-orange btn-block">📚 เปิดอ่าน E-Book</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- View 2: E-Book Reader Layout -->
+    <section class="reader-layout" id="reader-view">
+      <!-- Sidebar Navigation -->
+      <aside class="reader-sidebar" id="reader-navigation">
+        <div class="sidebar-header">
+          <h3 id="sidebar-unit-title">หน่วยการเรียนรู้</h3>
+          <ul class="chapter-list" id="sidebar-chapters">
+            <!-- Dynamically populated by JS -->
+          </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+          <button class="btn btn-outline btn-block back-btn" onclick="app.showView('dashboard')">
+            ⬅️ กลับชั้นหนังสือ
+          </button>
+        </div>
+      </aside>
+      
+      <!-- Main Content Area -->
+      <section class="reader-content-panel" id="reader-content-display">
+        <!-- Settings Bar (Inside reader for quick adjustments) -->
+        <div class="reader-settings-bar">
+          <div class="back-btn" onclick="app.showView('dashboard')" id="reader-back-link">
+            <span>⬅️ ชั้นหนังสือ</span>
+          </div>
+          
+          <div class="fontSize-controls">
+            <span style="font-family: var(--font-accent); font-size: 0.9rem; margin-right: 0.3rem;">ขนาดตัวอักษร:</span>
+            <button class="fontSize-btn" id="font-dec" title="ลดขนาดตัวอักษร" aria-label="Decrease font size">ก-</button>
+            <button class="fontSize-btn" id="font-inc" title="เพิ่มขนาดตัวอักษร" aria-label="Increase font size">ก+</button>
+          </div>
+        </div>
+        
+        <!-- Content Container -->
+        <article class="content-area">
+          <h2 id="content-chapter-title" style="font-size: 2.2rem; margin-bottom: 1.5rem;">หัวข้อบทเรียน</h2>
+          <div id="content-body-area" class="content-body">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <!-- View 3: Search Results Panel -->
+    <section class="search-results-panel" id="search-results-view" style="display: none;">
+      <div class="container">
+        <div class="search-results-header">
+          <h2 id="search-results-title">ผลลัพธ์การค้นหา</h2>
+          <button class="btn btn-outline btn-sm" onclick="app.showView('dashboard')">❌ ปิดผลการค้นหา</button>
+        </div>
+        <p id="search-results-summary" class="text-muted"></p>
+        
+        <div class="search-results-list" id="search-results-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footnote / Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <p>พัฒนาขึ้นเพื่อการเรียนรู้วิทยาศาสตร์เชิงโต้ตอบ | © 2026 เคมี ม.6 สารประกอบอินทรีย์ & พอลิเมอร์</p>
+      <p class="text-muted" style="font-size: 0.85rem; margin-top: 0.5rem;">สนับสนุนเครื่องมือพิมพ์ใบกิจกรรมวิจัยที่สอดคล้องกับหัวข้อการเรียนการสอน</p>
+    </div>
+  </footer>
+
+  <!-- Modal 1: Info Popups (For Polymer Recycling Info) -->
+  <div class="modal-overlay" id="info-modal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="info-modal-title">รายละเอียดข้อมูล</h3>
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="info-modal-body">
+        <!-- Content injected by JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline modal-close" onclick="app.closeModals()">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Quizzes -->
+  <div class="modal-overlay" id="quiz-modal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="quiz-modal-title">แบบทดสอบท้ายหน่วย</h3>
+        <button class="modal-close" aria-label="Close quiz">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill"></div>
+        </div>
+        <div id="quiz-modal-body">
+          <!-- Quiz options and answers populated by JS -->
+        </div>
+      </div>
+      <div class="modal-footer" id="quiz-modal-footer">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Report Generator Builder -->
+  <div class="modal-overlay" id="report-modal">
+    <div class="modal-window" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 id="report-modal-title">สร้างรายงานใบกิจกรรม</h3>
+        <button class="modal-close" aria-label="Close report generator">&times;</button>
+      </div>
+      <div class="modal-body" id="report-form-container">
+        <!-- Forms built by JS depending on unit -->
+      </div>
+      <div class="modal-footer" id="report-modal-footer">
+        <!-- Buttons injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
